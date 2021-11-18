@@ -1,0 +1,2 @@
+Changes in 5.2.12.Final-e2
+* Update POM for source jar generation

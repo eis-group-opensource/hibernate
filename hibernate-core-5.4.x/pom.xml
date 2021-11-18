@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>5.4.9.Final-e1-SNAPSHOT</version>
+
+    <name>Hibernate ORM - hibernate-core</name>
+    <description>Hibernate's core ORM functionality with fix patch regarding issue
+        https://hibernate.atlassian.net/browse/HHH-13340
+    </description>
+    <url>http://hibernate.org/orm</url>
+    <organization>
+        <name>Hibernate.org</name>
+        <url>http://hibernate.org</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>GNU Library General Public License v2.1 or later</name>
+            <url>http://www.opensource.org/licenses/LGPL-2.1</url>
+            <distribution>repo</distribution>
+            <comments>See discussion at http://hibernate.org/community/license/ for more details.</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>hibernate-team</id>
+            <name>The Hibernate Development Team</name>
+            <organization>Hibernate.org</organization>
+            <organizationUrl>http://hibernate.org</organizationUrl>
+        </developer>
+        <developer>
+            <id>eis-team</id>
+            <name>Add patch to fix issue https://hibernate.atlassian.net/browse/HHH-13340</name>
+        </developer>
+    </developers>
+    <issueManagement>
+        <system>jira</system>
+        <url>https://hibernate.atlassian.net/browse/HHH</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:hg:https://vno-hg.exigengroup.com/hg/eis-thirdparty</connection>
+        <developerConnection>scm:hg:https://vno-hg.exigengroup.com/hg/eis-thirdparty</developerConnection>
+        <url>https://vno-hg.exigengroup.com/hg/eis-thirdparty</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <hibernate.core.version>5.4.9.Final</hibernate.core.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>antlr:antlr</exclude>
+                                    <exclude>org.jboss.spec.javax.transaction</exclude>
+                                    <exclude>org.jboss:jandex</exclude>
+                                    <exclude>org.jboss.logging:jboss-logging</exclude>
+                                    <exclude>javax.persistence:javax.persistence-api</exclude>
+                                    <exclude>javax.xml.bind:*</exclude>
+                                    <exclude>org.javassist:javassist</exclude>
+                                    <exclude>org.dom4j:dom4j</exclude>
+                                    <exclude>com.fasterxml:classmate</exclude>
+                                    <exclude>org.hibernate.common</exclude>
+                                    <exclude>org.glassfish.jaxb:*</exclude>
+                                    <exclude>net.bytebuddy:byte-buddy</exclude>
+                                    <exclude>com.sun.istack:istack-commons-runtime</exclude>
+                                    <exclude>org.jvnet.staxex:stax-ex</exclude>
+                                    <exclude>com.sun.xml.fastinfoset:FastInfoset</exclude>
+                                    <exclude>javax.activation:javax.activation-api</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>org.hibernate:hibernate-core:${hibernate.core.version}</artifact>
+                                    <includes>
+                                        <include>**/*.class</include>
+                                        <include>**/*.xml</include>
+                                        <include>**/*.xsd</include>
+                                        <include>**/*.MF</include>
+                                        <include>**/*.properties</include>
+                                    </includes>
+                                    <excludes>
+                                        <exlude>org/hibernate/engine/spi/QueryParameters.class</exlude>
+                                        <exlude>org/hibernate/loader/Loader.class</exlude>
+                                        <exlude>org/hibernate/loader/collection/SubselectCollectionLoader.class</exlude>
+                                        <exlude>org/hibernate/loader/collection/SubselectOneToManyLoader.class</exlude>
+                                        <exlude>org/hibernate/param/DynamicFilterParameterSpecification.class</exlude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Plugins for source generation (shade plugin source option fail to include patched java files) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.hibernate</groupId>
+                                    <artifactId>hibernate-core</artifactId>
+                                    <version>${hibernate.core.version}</version>
+                                    <classifier>sources</classifier>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/merged_sources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/merged_sources</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.sourceDirectory}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.eisgroup.eis.maven</groupId>
+                <artifactId>eis-maven-source-dir-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>external-dir-jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/merged_sources/</sourceRoot>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.core.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
