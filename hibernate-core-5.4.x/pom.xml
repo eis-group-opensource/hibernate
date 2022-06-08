@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-core</artifactId>
-    <version>5.4.9.Final-e1-SNAPSHOT</version>
+    <version>5.4.33.Final-e2-SNAPSHOT</version>
 
     <name>Hibernate ORM - hibernate-core</name>
     <description>Hibernate's core ORM functionality with fix patch regarding issue
@@ -48,7 +48,7 @@
     </scm>
 
     <properties>
-        <hibernate.core.version>5.4.9.Final</hibernate.core.version>
+        <hibernate.core.version>5.4.33.Final</hibernate.core.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -186,7 +186,18 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.core.version}</version>
+            <version>5.4.33.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jandex</artifactId>
+            <version>2.2.3.Final</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xml-apis</artifactId>
+                    <groupId>xml-apis</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
